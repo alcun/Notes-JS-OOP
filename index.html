@@ -1,0 +1,390 @@
+//object is an array with key values like
+
+let dog = {
+name: “joh”,
+numLegs: 4,
+};
+
+
+
+
+//access them with dot notation like this
+
+let dog = {
+  name: "Spot",
+  numLegs: 4
+};
+
+console.log(dog.name);
+console.log(dog.numLegs);
+
+
+//a method can be added as a key value such as a function like so
+
+let dog = {
+  name: "Spot",
+  numLegs: 4,
+    sayLegs: function() {return "This dog has " + dog.numLegs + " legs.";}
+};
+
+console.log(dog.sayLegs());
+
+
+//you can use ‘this’ to run the function within that object even if the name changes for example:
+
+let dog = {
+  name: "Spot",
+  numLegs: 4,
+  sayLegs: function() {return "This dog has " + this.numLegs + " legs.";}
+};
+
+console.log(dog.sayLegs());
+
+
+
+//constructors are like a blueprint for new objects
+//defined with cap name to distinguish from non constructor functions
+//use this to define properties inside object
+
+function Dog() {
+  this.name = "Albert";
+  this.color = "blue";
+  this.numLegs = 2;
+}
+
+
+//after setting blue prints we can init into an object using 'new' like so:
+
+let hound = new Dog()
+console.log(hound)
+
+
+//you can group objects by shared properties/characteristics and then assign those when you create a new class:
+
+function Dog(name, color) {
+ this.name = name;
+ this.color = color;
+ this.numLegs = 4;
+}
+
+let terrier = new Dog("Barker", "blue" )
+
+
+
+//A new object made with a constructor is called an instance of - you can verify that liek so:
+
+function House(numBedrooms) {
+  this.numBedrooms = numBedrooms;
+}
+
+let myHouse = new House(4)
+
+myHouse instanceof House //console log here would be true
+
+
+//ownprops are props defined in instance object, here we push one onto a new array
+
+
+function Bird(name) {
+  this.name = name;
+  this.numLegs = 2;
+}
+
+let canary = new Bird("Tweety");
+let ownProps = [];
+for (let property in canary) {
+  if(canary.hasOwnProperty(property)){
+    ownProps.push(property);
+  }
+}
+
+console.log(ownProps);
+
+
+
+//prototype properties are shared amongst all instances - the ‘recipe’ for creating objects, they can be added from outside original code block like so;
+
+function Dog(name) {
+  this.name = name;
+}
+  Dog.prototype.numLegs = 2;
+
+
+
+//ownproperties are defined in object instance and prototype in the prototype - here we can see the first console log gives name, the own property of beagle and numLegs, the prototype property of Dog 
+
+function Dog(name) {
+  this.name = name;
+}
+
+Dog.prototype.numLegs = 4;
+
+let beagle = new Dog("Snoopy");
+
+let ownProps = [];
+let prototypeProps = [];
+
+
+for (let property in beagle){
+  if(beagle.hasOwnProperty(property)){
+    ownProps.push(property);
+  } else {
+    prototypeProps.push(property)
+  
+  }
+}
+
+console.log(ownProps);
+console.log(prototypeProps);
+
+
+
+//a constructor property can reference to the constructor functipon that created the instance and tell us what type of object
+
+function Dog(name) {
+  this.name = name;
+}
+
+function joinDogFraternity(candidate) {
+  if (candidate.constructor === Dog) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+
+//you can set a prototype to a new obejct and contain the functions as properties:
+
+function Dog(name) {
+  this.name = name;
+}
+
+Dog.prototype = {
+  numLegs: 4, 
+  eat: function() {
+    console.log("nom nom nom");
+  },
+  describe: function() {
+    console.log("My name is " + this.name);
+  }
+};
+
+
+console.log(Dog.prototype)
+
+
+
+
+// when you overwrite the prototype you will lose the constructor property
+//fix this by manually defining it in the prototype like so
+
+Dog.prototype = {
+  constructor: Dog,
+  numLegs: 4,
+  eat: function() {
+    console.log("nom nom nom");
+  },
+  describe: function() {
+    console.log("My name is " + this.name);
+  }
+};
+
+
+//you can use isPrototype of to check the prototype of an instance like so 
+
+function Dog(name) {
+  this.name = name;
+}
+
+let beagle = new Dog("Snoopy");
+
+console.log(Dog.prototype.isPrototypeOf(beagle)); //returns true
+
+
+
+
+
+//a prototype is an object - so it can have its own prototype - supertype'Object' and subtype ‘Duck’
+
+console.log(Object.prototype.isPrototypeOf(Dog.prototype)); //dog is subtype of supertype Object
+
+
+
+
+//inheritance can be used to avoid repeating youself, here we creat new instances inheriting the eat function from prototype
+
+function Animal() { }
+
+Animal.prototype = {
+  constructor: Animal,
+  eat: function() {
+    console.log("nom nom nom");
+  }
+};
+
+
+let duck = Object.create(Animal.prototype); 
+let beagle = Object.create(Animal.prototype); 
+
+
+
+//here we set the childs prorotype to an instance of the parent
+
+function Dog() { }
+
+Dog.prototype = Object.create(Animal.prototype);
+
+let beagle = new Dog();
+
+
+//an object will inheret the supertype's constructor property, you can change those like so 
+
+Bird.prototype.constructor = Bird;
+Dog.prototype.constructor = Dog;
+
+
+
+//you can add methods to an object after it inherits - 
+//here we make animal prototype with functions
+//inherit them to dog constructor and reset the constructor to Dog
+//then we add the bark function to dog but not to animal - it is init in beagle 
+
+function Animal() { }
+Animal.prototype.eat = function() { console.log("nom nom nom"); };
+
+function Dog() { }
+
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+Dog.prototype.bark = function() {
+  console.log("Woof!");
+};
+
+
+let beagle = new Dog();
+
+
+
+//alter and override inherited methods by redefining them in the prototype like so :
+
+function Bird() { }
+
+Bird.prototype.fly = function() { return "I am flying!"; };
+
+function Penguin() { }
+Penguin.prototype = Object.create(Bird.prototype);
+Penguin.prototype.constructor = Penguin;
+
+Penguin.prototype.fly = function(){
+  return "Alas, this is a flightless bird."
+}
+
+let penguin = new Penguin();
+console.log(penguin.fly());
+
+
+
+
+//Mixin will add a common behaviour between two unrelated objects like so, gives any object a method
+//
+
+
+let bird = {
+  name: "Donald",
+  numLegs: 2
+};
+
+let boat = {
+  name: "Warrior",
+  type: "race-boat"
+};
+
+
+let glideMixin = function(obj) {
+  obj.glide = function() {
+    console.log("Gliding!");
+  }
+}
+  glideMixin(bird);
+glideMixin(boat);
+
+
+
+
+
+//closure will make a public prop private so it cannot be changed - if we add the var in the constructor then it can only be changed by methods also in that constructor function 
+//a function has access to the context in which it was created - this is called closure
+//here we make a private variable and add a function and access that var in a new instance 
+
+
+function Bird() {
+  let weight = 15;
+
+  this.getWeight = function(){
+    return weight;
+  };
+}
+
+
+let ducky = new Bird();
+console.log(ducky.getWeight());
+
+
+//IIFE Immediately Invoked Function Expression executes it as soon as it is dclared 
+//the function is anonympus and not stored in a var and invoked with ()
+
+function makeNest() {
+  console.log("A cozy nest is ready");
+}
+
+makeNest();
+
+//becomes
+
+(function () {
+  console.log("A cozy nest is ready");
+})();
+
+
+
+//use an IIFE to group related functionality into a single module 
+
+
+
+
+let isCuteMixin = function(obj) {
+  obj.isCute = function() {
+    return true;
+  };
+};
+let singMixin = function(obj) {
+  obj.sing = function() {
+    console.log("Singing to an awesome tune");
+  };
+};
+
+
+
+
+
+//goes to
+
+
+let funModule = (function() {
+  return {
+    isCuteMixin: function(obj){
+      obj.cute = function(){
+        console.log("KAWAII DESU NEEE") };
+       },
+  
+
+singMixin: function(obj) {
+    obj.sing = function() {
+      console.log("lah dee dfa");
+    };
+  }
+  }
+})();
+
